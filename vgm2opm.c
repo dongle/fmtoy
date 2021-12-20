@@ -140,7 +140,6 @@ void opn_voice_dump_opm(struct opn_voice *v, int n) {
 	printf("CH: 64 %i %i 0 0 120 0\n", v->fb_connect >> 3 & 0x07, v->fb_connect & 0x07);
 	int op_order[4] = { 0, 2, 1, 3 };
 	char *op_names[4] = { "M1", "C1", "M2", "C2" };
-	uint8_t detune_values[8] = { 3, 4, 5, 6, 3, 2, 1, 0 };
 	for(int i = 0; i < 4; i++) {
 		struct opn_voice_operator *op = &v->operators[op_order[i]];
 		printf("%s: %2d %2d %2d %2d %2d %3d %2d %2d %2d 0 0\n",
@@ -153,7 +152,7 @@ void opn_voice_dump_opm(struct opn_voice *v, int n) {
 			op->tl & 0x7f,       // TL -> TL
 			op->ks_ar >> 6,      // KS -> KS
 			op->dt_mul & 0x0f, // MULTI -> MUL
-			detune_values[op->dt_mul >> 4 & 0x07] // DT -> DT1
+			op->dt_mul >> 4 & 0x07	 // DT -> DT1
 		);
 	}
 	printf("\n");
@@ -477,20 +476,6 @@ ALL_CHIPPOS
 		free(opm_voices);
 		opm_voices = 0;
 		num_opm_voices = 0;
-
-		for(int j = voice_num; j < 128; j++) {
-			printf(
-				"@:%d no Name\n"
-				"LFO: 0 0 0 0 0\n"
-				"CH: 64 0 0 0 0 64 0\n"
-				"M1: 31 0 0 4 0 0 0 1 0 0 0\n"
-				"C1: 31 0 0 4 0 0 0 1 0 0 0\n"
-				"M2: 31 0 0 4 0 0 0 1 0 0 0\n"
-				"C2: 31 0 0 4 0 0 0 1 0 0 0\n"
-				"\n",
-				j
-			);
-		}
 	}
 
 	return 0;
